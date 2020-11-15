@@ -1,47 +1,64 @@
 ---
-^    - name: stop docker daemon
-^    ^      systemd:
-^    ^        name: docker
-^    ^        state: stopped
-^    ^        enabled: no
-^
-^
-^    ^    - name: install docker
-^    ^      yum:
-^    ^        name: "{{ item }}"
-^    ^        state: absent
-^    ^      with_items:
-^    ^        - docker
-^    ^        - docker-client
-^    ^        - docker-client-latest
-^    ^        - docker-common
-^    ^        - docker-latest
-^    ^        - docker-latest-logrotate
-^    ^        - docker-logrotate
-^    ^        - docker-engine
-^    ^        - docker-ce
-^    ^        - docker-ce-cli
-^    ^        - containerd.io
-^
-^    ^    - name: install prerequirements
-^    ^      yum:
-^    ^        name: "{{ item }}"
-^    ^        state: latest
-^    ^        update_cache: yes
-^    ^      with_items:
-^    ^        - yum-utils
-^    ^        - device-mapper-persistent-data
-^    ^        - lvm2
-^
-^    ^    - name: add yum docker repo
-^    ^      shell: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
-^    ^
-^    ^    - name: install docker
-^    ^      yum:
-^    ^        name: "{{ item }}"
-^    ^        state: latest
-^    ^        update_cache: yes
-^    ^      with_items:
-^    ^        - docker-ce
-^    ^        - docker-ce-cli
-^    ^        - containerd.io
+
+# docker install if docker_installation == 'y'
+
+- name: stop docker daemon
+  systemd:
+    name: docker
+    state: stopped
+    enabled: no
+
+- name: install docker
+  yum:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - docker
+    - docker-client
+    - docker-client-latest
+    - docker-common
+    - docker-latest
+    - docker-latest-logrotate
+    - docker-logrotate
+    - docker-engine
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+
+- name: install prerequirements
+  yum:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  with_items:
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2
+
+- name: add yum docker repo
+  shell: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+
+- name: install docker
+  yum:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  with_items:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+
+- name: enable docker service
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+
+
+- name: pip docker, docker-compose
+  pip:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - docker
+    - docker-compose

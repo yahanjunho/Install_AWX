@@ -2,60 +2,25 @@
 - name: test
   hosts: localhost
   tasks:
-    - name: stop docker daemon
-      systemd:
-        name: docker
-        state: stopped
-        enabled: no
-  
 
-    - name: install docker
-      yum:
-        name: "{{ item }}"
-        state: absent
-      with_items:
-        - docker
-        - docker-client
-        - docker-client-latest
-        - docker-common
-        - docker-latest
-        - docker-latest-logrotate
-        - docker-logrotate
-        - docker-engine
-        - docker-ce
-        - docker-ce-cli
-        - containerd.io
+    - name: docker/docker-compose install
+      include_tasks: docker_install.yml
+      when: docker_installation == 'y'
 
-    - name: install prerequirements
-      yum:
-        name: "{{ item }}"
-        state: latest
-        update_cache: yes
-      with_items:
-        - yum-utils
-        - device-mapper-persistent-data
-        - lvm2
- 
-    - name: add yum docker repo
-      shell: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
 
-    - name: install docker
-      yum:
-        name: "{{ item }}"
-        state: latest
-        update_cache: yes
-      with_items:
-        - docker-ce
-        - docker-ce-cli
-        - containerd.io
+    - name: 'check {{ awx_version }}'
+      set_fact:
+        awx_version: "{{ awx_version }}"
+        awx_release_tags: [ '1.0.0', '1.0.1', '1.0.2', '1.0.3', '1.0.4', '1.0.5', '1.0.6', '1.0.7', '1.0.8', '2.0.0', '2.1.0', '2.1.1', '2.1.2', 
+                            '3.0.0', '3.0.1', '4.0.0', '5.0.0', '6.0.0', '6.1.0', '7.0.0', '8.0.0', '9.0.0', '9.0.1', '9.1.0', '9.1.1', '9.2.0', '9.3.0', 
+                            '10.0.0','11.0.0','11.1.0','11.2.0','12.0.0','13.0.0','14.0.0','14.1.0','15.0.0','15.0.1' ]
 
-    - name: enable docker service
-      systemd:
-        name: docker
-        state: started
-        enabled: yes  
+    - name: Fail
+      fail:
+      when: awx_version not in awx_release_tags
 
-    - name: install ansible
+
+    - name: prerequirement install
       yum:
         name: "{{ item }}"
         state: latest
@@ -73,38 +38,32 @@
         - python-pip
         - python-docker-py
       
-    - name: install etc
-      yum:
-        name: "{{ item }}"
-        state: latest
-        update_cache: yes
-      with_items:
-        - wget
-        - ntp
-        - google-authenticator
-        - zlib-devel
-        - bzip2
-        - bzip2-devel
-        - bzie2-develcurl
-        - libffi-devel
-        - make
-        - openssl-devel
-        - readline-devel
-        - sqlite
-        - sqlite-devel
-        - xz
-        - xz-devel
-        - zlib-devel
-        - google-chrome-stable
-        - unzip
+    # - name: install etc
+    #   yum:
+    #     name: "{{ item }}"
+    #     state: latest
+    #     update_cache: yes
+    #   with_items:
+    #     - wget
+    #     - ntp
+    #     - google-authenticator
+    #     - zlib-devel
+    #     - bzip2
+    #     - bzip2-devel
+    #     - bzie2-develcurl
+    #     - libffi-devel
+    #     - make
+    #     - openssl-devel
+    #     - readline-devel
+    #     - sqlite
+    #     - sqlite-devel
+    #     - xz
+    #     - xz-devel
+    #     - zlib-devel
+    #     - google-chrome-stable
+    #     - unzip
 
-    - name: pip docker, docker-compose
-      pip:
-        name: "{{ item }}"
-        state: present
-      with_items:
-        - docker
-        - docker-compose
+
 
     - name: git awx source clone
       git:
@@ -115,27 +74,27 @@
         force: yes
      
  
-    - name: inventory config
+    - name: inventory config, postgres_data_dir
       lineinfile:
         path: /root/awx_git_clone/installer/inventory
         regexp: '^postgres_data_dir'
-        line: postgres_data_dir=/opt/awxdb
+        line: 'postgres_data_dir=/opt/awxdb_{{ awx_version }}'
 
     
-    - name: inventory config
+    - name: inventory config, docker_compose_dir
       lineinfile:
         path: /root/awx_git_clone/installer/inventory
         regexp: '^docker_compose_dir'
-        line: docker_compose_dir=/opt/awxcompose
+        line: 'docker_compose_dir=/opt/awxcompose_{{ awx_version }}'
 
 
-    - name: mkdir /opt/awxdb, /opt/awxcompose
+    - name: 'mkdir /opt/awxdb_{{ awx_version }}, /opt/awxcompose_{{ awx_version }}'
       file:
         path: /opt/{{ item }}
         state: directory
       with_items:
-        - awxdb
-        - awxcompose
+        - 'awxdb_{{ awx_version }}'
+        - 'awxcompose_{{ awx_version }}'
 
 
     - name: make docker-compose
@@ -147,4 +106,4 @@
     - name: docker-compose up -d
       shell: "docker-compose up -d"
       args:
-        chdir: /opt/awxcompose/
+        chdir: '/opt/awxcompose_{{ awx_version }}/'
