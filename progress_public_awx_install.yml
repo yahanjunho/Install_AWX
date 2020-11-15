@@ -1,0 +1,150 @@
+---
+- name: test
+  hosts: localhost
+  tasks:
+    - name: stop docker daemon
+      systemd:
+        name: docker
+        state: stopped
+        enabled: no
+  
+
+    - name: install docker
+      yum:
+        name: "{{ item }}"
+        state: absent
+      with_items:
+        - docker
+        - docker-client
+        - docker-client-latest
+        - docker-common
+        - docker-latest
+        - docker-latest-logrotate
+        - docker-logrotate
+        - docker-engine
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+
+    - name: install prerequirements
+      yum:
+        name: "{{ item }}"
+        state: latest
+        update_cache: yes
+      with_items:
+        - yum-utils
+        - device-mapper-persistent-data
+        - lvm2
+ 
+    - name: add yum docker repo
+      shell: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+
+    - name: install docker
+      yum:
+        name: "{{ item }}"
+        state: latest
+        update_cache: yes
+      with_items:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+
+    - name: enable docker service
+      systemd:
+        name: docker
+        state: started
+        enabled: yes  
+
+    - name: install ansible
+      yum:
+        name: "{{ item }}"
+        state: latest
+        update_cache: yes
+      with_items:
+        - epel-release
+        - git
+        - gettext
+        - ansible
+        - nodejs
+        - npm
+        - gcc
+        - gcc-c++
+        - bzip2
+        - python-pip
+        - python-docker-py
+      
+    - name: install etc
+      yum:
+        name: "{{ item }}"
+        state: latest
+        update_cache: yes
+      with_items:
+        - wget
+        - ntp
+        - google-authenticator
+        - zlib-devel
+        - bzip2
+        - bzip2-devel
+        - bzie2-develcurl
+        - libffi-devel
+        - make
+        - openssl-devel
+        - readline-devel
+        - sqlite
+        - sqlite-devel
+        - xz
+        - xz-devel
+        - zlib-devel
+        - google-chrome-stable
+        - unzip
+
+    - name: pip docker, docker-compose
+      pip:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - docker
+        - docker-compose
+
+    - name: git awx source clone
+      git:
+        repo: https://github.com/ansible/awx.git
+        dest: /root/awx_git_clone/
+        clone: yes
+        update: no
+        force: yes
+     
+ 
+    - name: inventory config
+      lineinfile:
+        path: /root/awx_git_clone/installer/inventory
+        regexp: '^postgres_data_dir'
+        line: postgres_data_dir=/opt/awxdb
+
+    
+    - name: inventory config
+      lineinfile:
+        path: /root/awx_git_clone/installer/inventory
+        regexp: '^docker_compose_dir'
+        line: docker_compose_dir=/opt/awxcompose
+
+
+    - name: mkdir /opt/awxdb, /opt/awxcompose
+      file:
+        path: /opt/{{ item }}
+        state: directory
+      with_items:
+        - awxdb
+        - awxcompose
+
+
+    - name: make docker-compose
+      shell: "ansible-playbook -i inventory install.yml"
+      args:
+        chdir: /root/awx_git_clone/installer/
+
+
+    - name: docker-compose up -d
+      shell: "docker-compose up -d"
+      args:
+        chdir: /opt/awxcompose/

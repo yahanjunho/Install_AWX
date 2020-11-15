@@ -1,0 +1,28 @@
+---
+- name: test
+  hosts: localhost
+  tasks:
+    - name: install etc
+      yum:
+        name: "{{ item }}"
+        state: latest
+        update_cache: yes
+      with_items:
+        - ntp
+        - google-authenticator
+        - zlib-devel
+        - bzip2
+        - bzip2-devel
+        - curl-devel 
+        - openssl-devel
+        - libffi-devel
+        - make
+        - openssl-devel
+        - readline-devel
+        - sqlite
+        - sqlite-devel
+        - xz
+        - xz-devel
+        - zlib-devel
+        - google-chrome-stable
+        - unzip
