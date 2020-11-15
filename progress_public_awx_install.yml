@@ -3,6 +3,11 @@
   hosts: localhost
   tasks:
 
+    - name: default set_fact, docker_installation == 'n'
+      set_fact:
+        docker_installation == 'n'
+
+
     - name: docker/docker-compose install
       include_tasks: docker_install.yml
       when: docker_installation == 'y'
