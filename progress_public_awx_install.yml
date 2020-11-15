@@ -70,15 +70,33 @@
 
 
 
+#    - name: git awx source clone
+#      git:
+#        repo: https://github.com/ansible/awx.git
+#        dest: /root/awx_git_clone/
+#        version: "{{ awx_version }}"
+#        clone: yes
+#        update: no
+#        force: yes
+
     - name: git awx source clone
-      git:
-        repo: https://github.com/ansible/awx.git
-        dest: /root/awx_git_clone/
-        clone: yes
-        update: no
-        force: yes
-     
+      shell: "git clone  https://github.com/ansible/awx.git awx_git_clone"
+      args:
+        chdir: /root/
+
+    - name: "git checkout tags/{{ awx_version }}"
+      shell: "git checkout tags/{{ awx_version }}"
+      args:
+        chdir: /root/awx_git_clone/
+
+
+    - name: inventory config, python path
+      lineinfile:
+        path: /root/awx_git_clone/installer/inventory
+        regexp: '^localhost ansible_connection=local ansible_python_interpreter='
+        line: 'localhost ansible_connection=local ansible_python_interpreter={{ python_path }}'
  
+
     - name: inventory config, postgres_data_dir
       lineinfile:
         path: /root/awx_git_clone/installer/inventory
