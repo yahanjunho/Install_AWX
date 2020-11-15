@@ -5,7 +5,7 @@
 
     - name: default set_fact, docker_installation == 'n'
       set_fact:
-        docker_installation == 'n'
+        docker_installation: n
 
 
     - name: docker/docker-compose install
