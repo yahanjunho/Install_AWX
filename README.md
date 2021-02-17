@@ -46,5 +46,5 @@ docker_installation : 'y' is that install also docker + docker-compose / 'n' is 
 > check tag in ansible/awx github's repository - [https://github.com/ansible/awx](https://github.com/ansible/awx)  
 
 ```
-# ansible-playbook progress_public_awx_install.yml -e "awx_version=9.1.1 docker_installation=n python_path=/usr/bin/python
+# ansible-playbook progress_public_awx_install.yml -e "awx_version=9.1.1 docker_installation=n python_path=/usr/bin/python"
 ```
