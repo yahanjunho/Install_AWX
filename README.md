@@ -37,14 +37,12 @@ ansible 2.9.17
 
 ### Install AWX
 
-`**awx_version** : awx's version which want to be installed (ex, 9.1.1)`
-check tag in ansible/awx github's repository - [https://github.com/ansible/awx](https://github.com/ansible/awx)
-  
-`**python_path** : 'which python' command's result (ex, /usr/bin/python )`
-
-`**docker_installation** : 'y' is that install also docker + docker-compose / 'n' is that do not install any docker + docker-compose`
-
 ```
-# ansible-playbook progress_public_awx_install.yml -e "awx_version=9.1.1 docker_installation=n python_path=/usr/bin/python"
+awx_version : awx's version which want to be installed (ex, 9.1.1)
+python_path : 'which python' command's result (ex, /usr/bin/python )
+docker_installation : 'y' is that install also docker + docker-compose / 'n' is that do not install any docker + docker-compose
 ```
 
+> check tag in ansible/awx github's repository - [https://github.com/ansible/awx](https://github.com/ansible/awx)  
+
+`ansible-playbook progress_public_awx_install.yml -e "awx_version=9.1.1 docker_installation=n python_path=/usr/bin/python`
