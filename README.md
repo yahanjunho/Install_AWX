@@ -10,9 +10,7 @@
 
 
 
-#### check, ansible's python interpreter version
-
-(ansible must be installed with python 2.X)
+#### check, ansible's python interpreter version (ansible must be installed with python 2.X)
 
 ```
 # ansible --version
