@@ -1,6 +1,6 @@
 # AWX
 
-#### git clone
+### git clone
 
 ```
 # git clone https://github.com/yahanjunho/Install_AWX.git
@@ -10,7 +10,7 @@
 
 
 
-#### check, ansible's python interpreter version (ansible must be installed with python 2.X)
+### check, ansible's python interpreter version (ansible must be installed with python 2.X)
 
 ```
 # ansible --version
@@ -31,7 +31,7 @@ ansible 2.9.17
 
 
 
-#### Install AWX
+### Install AWX
 
 **awx_version** : awx's version which want to be installed (ex, 9.1.1)
 
