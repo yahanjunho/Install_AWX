@@ -6,7 +6,9 @@
 # git clone https://github.com/yahanjunho/Install_AWX.git
 ```
 
+  
 
+  
 
 
 
@@ -27,7 +29,9 @@ ansible 2.9.17
 /usr/bin/python
 ```
 
+  
 
+  
 
 
 
@@ -37,9 +41,9 @@ ansible 2.9.17
 
 **python_path** : 'which python' command's result (ex, /usr/bin/python )
 
-**docker_installation** : 'y' or 'n' / 'y' is that install also docker + docker-compose
+**docker_installation** :  'y' is that install also docker + docker-compose  
 
-​                                                      'n' is that do not install any docker + docker-compose
+​                                         'n' is that do not install any docker + docker-compose
 
 ```
 # ansible-playbook progress_public_awx_install.yml -e "awx_version=9.1.1 docker_installation=n python_path=/usr/bin/python"
