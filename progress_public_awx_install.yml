@@ -2,10 +2,11 @@
 - name: test
   hosts: localhost
   tasks:
+    - include_vars: vars.yml
 
-    - name: default set_fact, docker_installation == 'n'
-      set_fact:
-        docker_installation: n
+#    - name: default set_fact, docker_installation == 'n'
+#      set_fact:
+#        docker_installation: n
 
 
     - name: docker/docker-compose install
@@ -25,11 +26,25 @@
       when: awx_version not in awx_release_tags
 
 
+#    - name: prerequirement install
+#      yum:
+#        name: "{{ item }}"
+#        state: latest
+#        update_cache: yes
+#      with_items:
+#        - epel-release
+#        - git
+#        - gettext
+#        - ansible
+#        - nodejs
+#        - npm
+#        - gcc
+#        - gcc-c++
+#        - bzip2
+#        - python-pip
+
     - name: prerequirement install
-      yum:
-        name: "{{ item }}"
-        state: latest
-        update_cache: yes
+      shell: "yum install -y {{ item }}"
       with_items:
         - epel-release
         - git
@@ -41,6 +56,7 @@
         - gcc-c++
         - bzip2
         - python-pip
+      
      
 
     - name: pip docker install
