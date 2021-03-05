@@ -1,12 +1,23 @@
 ---
 
 # docker install if docker_installation == 'y'
+- name: check, docker daemon
+  service_facts:
+  register: service_list
+
+
+- name: check, docker daemon
+  set_fact:
+    docker_exists: "{{ 'y' if 'docker.service' in service_list['ansible_facts']['services'] else 'n' }}"
+
 
 - name: stop docker daemon
   systemd:
     name: docker
     state: stopped
     enabled: no
+  when: docker_exists == 'y'
+
 
 - name: install docker
   yum:
