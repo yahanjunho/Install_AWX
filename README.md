@@ -7,7 +7,21 @@
 ```
 
   
+### mv awxdb_version /opt/awxdb_version, mv awxcompose_version /opt/awxcompose_version
 
+```
+# cd Install_AWX
+# cp -rfp awxdb/awxdb_version /opt/awxdb_version
+# cp -rfp awxcompose/awxcompose_version /opt/awxcompose_version
+```
+
+
+### docker-compose up -d
+
+```
+# cd /opt/awxcompose_version
+# docker-compose up -d
+```
   
 
 
