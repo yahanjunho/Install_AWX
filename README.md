@@ -26,7 +26,7 @@
 <br>
 <br>
 
-# If you want to make docker-compose.yml directly, Follow below
+## If you want to make docker-compose.yml directly, Follow below
 ### check, ansible's python interpreter version (ansible must be installed with python 2.X)
 
 ```
@@ -44,7 +44,7 @@ ansible 2.9.17
 /usr/bin/python
 ```
 
-### Install AWX
+### check, extra_vars
 
 ```
 awx_version : awx's version which want to be installed (ex, 9.1.1)
